@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900 antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center overflow-hidden rounded-lg p-0.5 font-medium;
+  }
+
+  .btn-primary-gradient {
+    @apply absolute inset-0 bg-gradient-to-br from-[#1e56a0] to-[#16c2d5];
+  }
+
+  .btn-primary-gradient-hover {
+    @apply absolute inset-0 bg-gradient-to-br from-[#174785] to-[#14afc0];
+  }
+
+  .btn-primary-content {
+    @apply relative rounded-md bg-white px-6 py-3 transition-all duration-300 ease-out flex items-center;
+  }
+
+  .btn-primary-text {
+    @apply text-[#1e56a0] tracking-wide;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary hover:bg-secondary-dark text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 shadow-sm;
+  }
+
+  .container-section {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-md bg-white/90 border border-gray-100/20 shadow-[0_8px_30px_rgb(0,0,0,0.06)];
+  }
+}
+
+/* Force initial scroll position */
+html {
+  scroll-behavior: auto !important;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
