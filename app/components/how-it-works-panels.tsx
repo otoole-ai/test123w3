@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 // Define the panel data structure
@@ -149,103 +149,136 @@ export default function HowItWorksPanels() {
   }
 
   return (
-    <section ref={containerRef} className="bg-black text-white py-16 md:py-24 overflow-hidden">
+    <section ref={containerRef} className="bg-white text-gray-900 py-16 md:py-24 overflow-hidden">
       <div className="container mx-auto px-4 md:px-8">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
-          <p className="text-lg text-gray-300">
-            Most businesses focus on getting more traffic, but the real opportunity is converting the traffic you
-            already have.
+        {/* Main headline */}
+        <div className="text-center mb-12">
+          <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            We turn lost traffic into live conversations.
+          </h3>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            ClikConvert uncovers the identities of your anonymous visitors and turns them into warm leads. Then, our
+            done-for-you outreach system books qualified calls directly to your calendar.
           </p>
-          <div className="mt-4 inline-flex items-center px-4 py-2 rounded-full bg-blue-900/30 text-sm">
-            <span className="mr-2">Based on data from 500+ B2B companies</span>
-          </div>
         </div>
 
-        {/* Main content area */}
-        <div className="relative">
-          {/* Main headline */}
-          <div className="text-center mb-12">
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-              We turn lost traffic into live conversations.
-            </h3>
-            <p className="text-lg text-gray-300 max-w-3xl mx-auto">
-              ClikConvert uncovers the identities of your anonymous visitors and turns them into warm leads. Then, our
-              done-for-you outreach system books qualified calls directly to your calendar.
-            </p>
+        {/* Floating Cards Navigation */}
+        <div className="mt-12 max-w-6xl mx-auto">
+          {/* Step Navigation */}
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {panels.map((panel, index) => (
+              <button
+                key={panel.id}
+                onClick={() => goToPanel(index)}
+                className={cn(
+                  "px-5 py-3 rounded-xl text-sm md:text-base font-medium transition-all duration-300 flex items-center gap-2",
+                  activePanel === index
+                    ? `bg-white text-gray-900 shadow-lg border border-gray-100 transform -translate-y-1`
+                    : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-100 shadow-sm",
+                )}
+                aria-selected={activePanel === index}
+                role="tab"
+              >
+                <span
+                  className={cn(
+                    "flex items-center justify-center w-8 h-8 rounded-full text-sm",
+                    activePanel === index
+                      ? index === 0
+                        ? "bg-blue-600 text-white"
+                        : index === 1
+                          ? "bg-purple-600 text-white"
+                          : index === 2
+                            ? "bg-teal-600 text-white"
+                            : "bg-green-600 text-white"
+                      : "bg-gray-200 text-gray-700",
+                  )}
+                >
+                  {index + 1}
+                </span>
+                <span>{panel.title.split(".")[1].trim()}</span>
+              </button>
+            ))}
           </div>
 
-          {/* Infographic Panels */}
-          <div className="mt-12">
-            {/* Navigation Pills */}
-            <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
-              <div className="flex space-x-2 p-1 bg-gray-800/50 rounded-full">
-                {panels.map((panel, index) => (
-                  <button
-                    key={panel.id}
-                    onClick={() => goToPanel(index)}
-                    className={cn(
-                      "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap",
-                      activePanel === index
-                        ? `bg-gradient-to-r ${panel.color} text-white`
-                        : "text-gray-300 hover:text-white",
-                    )}
-                  >
-                    {panel.title.split(".")[0]}.{" "}
-                    <span className="hidden sm:inline">{panel.title.split(".")[1].trim()}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Panel Content */}
-            <div className="relative bg-gray-900 rounded-xl overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activePanel}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                  className="p-6 md:p-10"
-                >
-                  <div className="grid md:grid-cols-2 gap-8 items-center">
-                    {/* Left Column - Content */}
+          {/* Content Card */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activePanel}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+            >
+              <div className="p-8 md:p-10">
+                <div className="grid md:grid-cols-2 gap-10 items-start">
+                  {/* Left Column - Content */}
+                  <div className="space-y-8">
                     <div>
-                      <div
-                        className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${
-                          panels[activePanel].color
-                        } text-white font-bold text-xl mb-4`}
-                      >
-                        {activePanel + 1}
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                      <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900 flex items-center gap-3">
+                        <span
+                          className={cn(
+                            "flex items-center justify-center w-10 h-10 rounded-full text-white text-lg",
+                            activePanel === 0
+                              ? "bg-blue-600"
+                              : activePanel === 1
+                                ? "bg-purple-600"
+                                : activePanel === 2
+                                  ? "bg-teal-600"
+                                  : "bg-green-600",
+                          )}
+                        >
+                          {activePanel + 1}
+                        </span>
                         {panels[activePanel].title.split(".")[1].trim()}
                       </h3>
-                      <p className="text-gray-300 mb-6">{panels[activePanel].description}</p>
+                      <p className="text-gray-600 text-lg">{panels[activePanel].description}</p>
+                    </div>
 
-                      {/* Stats */}
-                      <div className="grid grid-cols-2 gap-4 mb-8">
-                        {panels[activePanel].stats.map((stat, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 + i * 0.1 }}
-                            className="bg-gray-800 p-4 rounded-lg"
+                    {/* Info Box */}
+                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 shadow-sm">
+                      <p className="text-gray-700">
+                        Our proprietary technology identifies companies visiting your website, even if they don't fill
+                        out a form. We track their behavior, pages visited, and time spent to determine their level of
+                        interest.
+                      </p>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      {panels[activePanel].stats.map((stat, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.2 + i * 0.1 }}
+                          className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300"
+                        >
+                          <div
+                            className={cn(
+                              "text-3xl md:text-4xl font-bold",
+                              activePanel === 0
+                                ? "text-blue-600"
+                                : activePanel === 1
+                                  ? "text-purple-600"
+                                  : activePanel === 2
+                                    ? "text-teal-600"
+                                    : "text-green-600",
+                            )}
                           >
-                            <div
-                              className={`text-2xl md:text-3xl font-bold bg-gradient-to-r ${panels[activePanel].color} bg-clip-text text-transparent`}
-                            >
-                              {stat.value}
-                            </div>
-                            <div className="text-sm text-gray-400">{stat.label}</div>
-                          </motion.div>
-                        ))}
-                      </div>
+                            {stat.value}
+                          </div>
+                          <div className="text-sm text-gray-600 mt-2">{stat.label}</div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
 
-                      {/* Features */}
+                  {/* Right Column - Features & Visualization */}
+                  <div className="space-y-8">
+                    {/* Features */}
+                    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                      <h4 className="font-semibold text-gray-900 mb-4">Key Features:</h4>
                       <div className="space-y-4">
                         {panels[activePanel].features.map((feature, i) => (
                           <motion.div
@@ -256,9 +289,16 @@ export default function HowItWorksPanels() {
                             className="flex items-start"
                           >
                             <div
-                              className={`flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r ${
-                                panels[activePanel].color
-                              } flex items-center justify-center mt-1 mr-3`}
+                              className={cn(
+                                "flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-1 mr-3",
+                                activePanel === 0
+                                  ? "bg-blue-600"
+                                  : activePanel === 1
+                                    ? "bg-purple-600"
+                                    : activePanel === 2
+                                      ? "bg-teal-600"
+                                      : "bg-green-600",
+                              )}
                             >
                               <svg
                                 width="12"
@@ -277,88 +317,209 @@ export default function HowItWorksPanels() {
                               </svg>
                             </div>
                             <div>
-                              <h4 className="font-medium text-white">{feature.title}</h4>
-                              <p className="text-sm text-gray-400">{feature.description}</p>
+                              <h4 className="font-medium text-gray-900">{feature.title}</h4>
+                              <p className="text-sm text-gray-600">{feature.description}</p>
                             </div>
                           </motion.div>
                         ))}
                       </div>
                     </div>
+                  </div>
 
-                    {/* Right Column - Visualization */}
-                    <div className="relative">
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5 }}
-                        className={`bg-gradient-to-br ${panels[activePanel].color} bg-opacity-10 rounded-xl p-6 aspect-square max-w-md mx-auto flex items-center justify-center`}
-                      >
-                        <div className="text-center">
-                          <div className="text-6xl font-bold mb-4">{activePanel + 1}</div>
-                          <div className="text-xl font-medium">{panels[activePanel].title.split(".")[1].trim()}</div>
+                  {/* Performance Metrics */}
+                  <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                    <h4 className="font-semibold text-gray-900 mb-4">Performance Metrics:</h4>
 
-                          {/* Data visualization would go here */}
-                          <div className="mt-6">
-                            <div className="h-4 bg-gray-700 rounded-full w-full max-w-xs mx-auto overflow-hidden">
-                              <motion.div
-                                initial={{ width: "0%" }}
-                                animate={{ width: "75%" }}
-                                transition={{ duration: 1, delay: 0.5 }}
-                                className={`h-full bg-gradient-to-r ${panels[activePanel].color}`}
-                              ></motion.div>
-                            </div>
-                            <div className="mt-4 text-sm text-gray-400">Conversion improvement</div>
+                    {activePanel === 0 && (
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm text-gray-600">Anonymous</span>
+                            <span className="text-sm font-medium text-gray-900">98%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: "98%" }}></div>
                           </div>
                         </div>
-                      </motion.div>
-                    </div>
+
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm text-gray-600">Identified</span>
+                            <span className="text-sm font-medium text-gray-900">2%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: "2%" }}></div>
+                          </div>
+                        </div>
+
+                        <div className="text-center text-gray-600 text-sm mt-4">
+                          <p>Without ClikConvert, you're missing out on 98% of your website visitors</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {activePanel === 1 && (
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm text-gray-600">High Intent</span>
+                            <span className="text-sm font-medium text-gray-900">23%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: "23%" }}></div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm text-gray-600">Medium Intent</span>
+                            <span className="text-sm font-medium text-gray-900">45%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: "45%" }}></div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm text-gray-600">Low Intent</span>
+                            <span className="text-sm font-medium text-gray-900">32%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: "32%" }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {activePanel === 2 && (
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm text-gray-600">Response Rate</span>
+                            <span className="text-sm font-medium text-gray-900">32%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div className="bg-teal-600 h-2.5 rounded-full" style={{ width: "32%" }}></div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm text-gray-600">Traditional Outreach</span>
+                            <span className="text-sm font-medium text-gray-900">10%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div className="bg-gray-400 h-2.5 rounded-full" style={{ width: "10%" }}></div>
+                          </div>
+                        </div>
+
+                        <div className="text-center text-gray-600 text-sm mt-4">
+                          <p>3.2x higher response rate than traditional outreach</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {activePanel === 3 && (
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm text-gray-600">Meeting Show Rate</span>
+                            <span className="text-sm font-medium text-gray-900">92%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div className="bg-green-600 h-2.5 rounded-full" style={{ width: "92%" }}></div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm text-gray-600">Qualified Leads</span>
+                            <span className="text-sm font-medium text-gray-900">78%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div className="bg-green-600 h-2.5 rounded-full" style={{ width: "78%" }}></div>
+                          </div>
+                        </div>
+
+                        <div className="text-center text-gray-600 text-sm mt-4">
+                          <p>5.4x more meetings booked than traditional methods</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Controls */}
-              <div className="flex justify-between items-center p-4 border-t border-gray-800">
-                <div className="flex space-x-2">
-                  <button
-                    onClick={togglePlayPause}
-                    className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
-                    aria-label={isPlaying ? "Pause" : "Play"}
-                  >
-                    {isPlaying ? <Pause size={16} /> : <Play size={16} />}
-                  </button>
                 </div>
+              </div>
 
-                <div className="flex items-center space-x-1">
+              {/* Card Footer with Navigation */}
+              <div className="bg-gray-50 p-6 border-t border-gray-100 flex justify-between items-center">
+                <button
+                  onClick={prevPanel}
+                  className={cn(
+                    "px-4 py-2 rounded-lg transition-colors",
+                    activePanel === 0
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-gray-700 hover:bg-white hover:shadow-sm",
+                  )}
+                  disabled={activePanel === 0}
+                  aria-label="Previous panel"
+                >
+                  <div className="flex items-center gap-2">
+                    <ChevronLeft size={16} />
+                    <span className="hidden sm:inline">Previous</span>
+                  </div>
+                </button>
+
+                <div className="flex items-center space-x-2">
                   {panels.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => goToPanel(index)}
                       className={`w-2 h-2 rounded-full transition-all ${
-                        activePanel === index ? "bg-white w-4" : "bg-gray-600 hover:bg-gray-500"
+                        activePanel === index
+                          ? index === 0
+                            ? "bg-blue-600 w-4"
+                            : index === 1
+                              ? "bg-purple-600 w-4"
+                              : index === 2
+                                ? "bg-teal-600 w-4"
+                                : "bg-green-600 w-4"
+                          : "bg-gray-300 hover:bg-gray-400"
                       }`}
                       aria-label={`Go to slide ${index + 1}`}
                     ></button>
                   ))}
                 </div>
 
-                <div className="flex space-x-2">
-                  <button
-                    onClick={prevPanel}
-                    className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
-                    aria-label="Previous panel"
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-                  <button
-                    onClick={nextPanel}
-                    className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
-                    aria-label="Next panel"
-                  >
+                <button
+                  onClick={nextPanel}
+                  className={cn(
+                    "px-4 py-2 rounded-lg transition-colors",
+                    activePanel === panels.length - 1
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-gray-700 hover:bg-white hover:shadow-sm",
+                  )}
+                  disabled={activePanel === panels.length - 1}
+                  aria-label="Next panel"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="hidden sm:inline">Next</span>
                     <ChevronRight size={16} />
-                  </button>
-                </div>
+                  </div>
+                </button>
               </div>
-            </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* CTA Button */}
+          <div className="mt-12 text-center">
+            <a
+              href="/book-call"
+              className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-md hover:shadow-lg transition-all md:py-4 md:text-lg md:px-8"
+            >
+              Book a Strategy Call
+              <ChevronRight className="ml-2 h-5 w-5" />
+            </a>
           </div>
         </div>
       </div>

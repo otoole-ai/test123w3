@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     description: "ClikConvert identifies your high-intent traffic and gets them on your calendar—automatically.",
     images: ["/og-image.jpg"],
   },
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({

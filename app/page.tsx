@@ -24,7 +24,7 @@ export default function Home() {
   }, [])
 
   return (
-    <main className="bg-white">
+    <main className="bg-gradient-to-b from-blue-50 via-white to-blue-50">
       <Hero />
       <ProblemCalculator />
       <SolutionSection />
