@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { CheckCircle, Play, ChevronRight, ChevronLeft, ArrowRight } from "lucide-react"
+import { useIntersectionObserver } from "../../hooks/use-intersection-observer"
 
 // Custom animations
 const customAnimations = `
@@ -15,6 +16,10 @@ const customAnimations = `
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(200%); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 `
 
@@ -38,6 +43,11 @@ interface Step {
 export default function HowItWorksPage() {
   const [activeStep, setActiveStep] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+
+  // Add these hooks for scroll animations
+  const [processRef, processInView] = useIntersectionObserver<HTMLElement>()
+  const [detailRef, detailInView] = useIntersectionObserver<HTMLElement>()
 
   // Page load animation
   useEffect(() => {
@@ -140,14 +150,22 @@ export default function HowItWorksPage() {
   }
 
   const nextStep = () => {
-    if (activeStep < steps.length - 1) {
-      setActiveStep(activeStep + 1)
+    if (activeStep < steps.length - 1 && !isTransitioning) {
+      setIsTransitioning(true)
+      setTimeout(() => {
+        setActiveStep(activeStep + 1)
+        setIsTransitioning(false)
+      }, 300)
     }
   }
 
   const prevStep = () => {
-    if (activeStep > 0) {
-      setActiveStep(activeStep - 1)
+    if (activeStep > 0 && !isTransitioning) {
+      setIsTransitioning(true)
+      setTimeout(() => {
+        setActiveStep(activeStep - 1)
+        setIsTransitioning(false)
+      }, 300)
     }
   }
 
@@ -176,12 +194,10 @@ export default function HowItWorksPage() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-5xl mx-auto text-center">
-            <div
-              className={`transition-all duration-700 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-            >
-              {/* 3D Heading with enhanced gradient */}
+            {/* Heading with 3D effect */}
+            <div>
               <div className="relative perspective-[1000px]">
-                <h1 className="text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-6 relative transform transition-all duration-700 hover:scale-[1.02] hover:rotate-x-1 hover:rotate-y-1">
+                <h1 className="text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-6 relative transform hover:scale-[1.02] hover:rotate-x-1 hover:rotate-y-1 transition-all duration-700">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1e56a0] to-[#16c2d5] inline-block pb-2">
                     How ClikConvert Works
                   </span>
@@ -203,9 +219,8 @@ export default function HowItWorksPage() {
               </div>
             </div>
 
-            <div
-              className={`transition-all duration-700 delay-300 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-            >
+            {/* Subheading */}
+            <div>
               {/* Enhanced subheading with animated underlines */}
               <p className="text-2xl md:text-3xl text-gray-800 max-w-3xl mx-auto mb-12 leading-relaxed">
                 Our{" "}
@@ -225,9 +240,8 @@ export default function HowItWorksPage() {
               </p>
             </div>
 
-            <div
-              className={`flex flex-wrap justify-center gap-6 mb-12 transition-all duration-700 delay-500 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-            >
+            {/* Buttons */}
+            <div className="flex flex-wrap justify-center gap-6 mb-12">
               {/* Interactive primary button with hover effects */}
               <Link
                 href="/book-call"
@@ -255,9 +269,8 @@ export default function HowItWorksPage() {
               </button>
             </div>
 
-            <div
-              className={`transition-all duration-700 delay-700 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-            >
+            {/* Data badge */}
+            <div>
               {/* Enhanced data badge with hover effect */}
               <div className="inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-50 to-cyan-50 text-sm text-blue-600 border border-blue-100 shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105">
                 <span className="mr-2 font-medium">Based on data from</span>
@@ -271,7 +284,12 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Process Steps Section - Enhanced */}
-      <section className="py-20 md:py-32 relative">
+      <section
+        ref={processRef}
+        className={`py-20 md:py-32 relative transition-all duration-1000 transform ${
+          processInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`}
+      >
         {/* Subtle background grid */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50 pointer-events-none"></div>
 
@@ -375,101 +393,188 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      {/* Active Step Detail */}
-      <section className="py-16 md:py-24 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-            <div className={`p-8 md:p-10 ${getColorClass(steps[activeStep].color, "bg")} text-white`}>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold">
-                  {activeStep + 1}
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold">{steps[activeStep].title}</h3>
-              </div>
-              <p className="text-lg text-white/90">{steps[activeStep].description}</p>
-            </div>
+      {/* Active Step Detail - Enhanced */}
+      <section
+        ref={detailRef}
+        className={`py-16 md:py-24 relative transition-all duration-1000 transform ${
+          detailInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`}
+      >
+        {/* Background elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Subtle grid pattern */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50"></div>
 
-            <div className="p-8 md:p-10">
-              <div className="grid md:grid-cols-2 gap-10">
-                <div>
-                  <div className="grid grid-cols-2 gap-6 mb-8">
-                    {steps[activeStep].stats.map((stat, i) => (
-                      <div key={i} className="bg-gray-50 p-5 rounded-xl">
-                        <div className={`text-3xl font-bold ${getColorClass(steps[activeStep].color, "text")}`}>
-                          {stat.value}
-                        </div>
-                        <div className="text-gray-600 mt-1">{stat.label}</div>
-                      </div>
-                    ))}
+          {/* Decorative elements */}
+          <div className="absolute top-40 right-[15%] w-64 h-64 rounded-full bg-blue-50 opacity-60 blur-3xl"></div>
+          <div className="absolute bottom-40 left-[15%] w-72 h-72 rounded-full bg-indigo-50 opacity-60 blur-3xl"></div>
+
+          {/* Floating shapes */}
+          <div className="absolute top-[25%] left-[5%] w-16 h-16 rounded-xl bg-gradient-to-br from-[#1e56a0]/10 to-[#16c2d5]/10 rotate-12 animate-[float_8s_ease-in-out_infinite]"></div>
+          <div className="absolute bottom-[20%] right-[10%] w-20 h-20 rounded-lg bg-gradient-to-br from-[#1e56a0]/10 to-[#16c2d5]/10 -rotate-12 animate-[float_12s_ease-in-out_infinite]"></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          {/* Section header */}
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#1e56a0] to-[#16c2d5] transition-all duration-300">
+              Step {activeStep + 1}: {steps[activeStep].title}
+            </h2>
+            <p className="text-xl text-gray-600 transition-all duration-300">
+              Explore the details of how this step helps convert visitors into customers
+            </p>
+          </div>
+
+          <div className="max-w-6xl mx-auto">
+            {/* Main content card with enhanced styling */}
+            <div
+              className={`bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 transform perspective-1000 hover:shadow-2xl transition-all duration-500 ${isTransitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}`}
+            >
+              {/* Header with gradient background */}
+              <div
+                className={`relative p-8 md:p-10 bg-gradient-to-r from-[#1e56a0] to-[#16c2d5] text-white overflow-hidden transition-all duration-300`}
+              >
+                {/* Background pattern */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_50%,rgba(255,255,255,0.1),transparent_60%)]"></div>
+
+                <div className="relative z-10 flex items-center gap-6">
+                  <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-white text-2xl font-bold border-2 border-white/30 shadow-lg">
+                    {activeStep + 1}
                   </div>
+                  <div>
+                    <h3 className="text-3xl md:text-4xl font-bold mb-2">{steps[activeStep].title}</h3>
+                    <p className="text-lg text-white/90 max-w-3xl">{steps[activeStep].description}</p>
+                  </div>
+                </div>
 
-                  <h4 className="font-semibold text-gray-900 text-xl mb-4">Key Features:</h4>
-                  <div className="space-y-4">
-                    {steps[activeStep].features.map((feature, i) => (
-                      <div key={i} className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                {/* Decorative corner accent */}
+                <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
+              </div>
+
+              <div className="p-8 md:p-10">
+                <div className="grid md:grid-cols-2 gap-10">
+                  <div>
+                    {/* Stats with enhanced styling */}
+                    <div className="grid grid-cols-2 gap-6 mb-8 transition-all duration-500">
+                      {steps[activeStep].stats.map((stat, i) => (
                         <div
-                          className={`flex-shrink-0 w-6 h-6 rounded-full ${getColorClass(steps[activeStep].color, "bg")} flex items-center justify-center mt-0.5 mr-3`}
+                          key={i}
+                          className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
                         >
-                          <CheckCircle className="w-4 h-4 text-white" />
+                          <div
+                            className={`text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#1e56a0] to-[#16c2d5]`}
+                          >
+                            {stat.value}
+                          </div>
+                          <div className="text-gray-600 mt-1">{stat.label}</div>
                         </div>
-                        <div>
-                          <h5 className="font-medium text-gray-900">{feature.title}</h5>
-                          <p className="text-gray-600 text-sm mt-1">{feature.description}</p>
+                      ))}
+                    </div>
+
+                    {/* Features with enhanced styling */}
+                    <h4 className="font-semibold text-gray-900 text-xl mb-6 flex items-center">
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1e56a0] to-[#16c2d5]">
+                        Key Features
+                      </span>
+                      <div className="h-px flex-grow bg-gradient-to-r from-[#1e56a0]/20 to-[#16c2d5]/20 ml-4"></div>
+                    </h4>
+
+                    <div className="space-y-4 transition-all duration-500 delay-100">
+                      {steps[activeStep].features.map((feature, i) => (
+                        <div
+                          key={i}
+                          className="flex items-start p-4 rounded-lg hover:bg-gray-50 transition-all duration-300 border border-transparent hover:border-gray-100 hover:shadow-sm"
+                        >
+                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-[#1e56a0] to-[#16c2d5] flex items-center justify-center mt-0.5 mr-4 shadow-md">
+                            <CheckCircle className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <h5 className="font-medium text-gray-900 text-lg">{feature.title}</h5>
+                            <p className="text-gray-600 mt-1">{feature.description}</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
+
+                  {/* Image with enhanced styling */}
+                  <div className="flex items-center justify-center transition-all duration-500 delay-200">
+                    <div className="rounded-xl overflow-hidden shadow-lg border border-gray-200 transform perspective-1000 hover:rotate-y-1 hover:rotate-x-1 transition-all duration-300 hover:shadow-xl group">
+                      <div className="relative">
+                        <Image
+                          src={steps[activeStep].image || "/placeholder.svg"}
+                          alt={steps[activeStep].title}
+                          width={500}
+                          height={300}
+                          className="w-full h-auto"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      </div>
+                      <div className="p-4 bg-white">
+                        <h5 className="font-medium text-gray-900">Visual representation</h5>
+                        <p className="text-sm text-gray-500">
+                          See how {steps[activeStep].title.toLowerCase()} works in practice
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation with enhanced styling */}
+              <div className="bg-gradient-to-r from-gray-50 to-white p-4 border-t border-gray-100 flex justify-between items-center">
+                <button
+                  onClick={prevStep}
+                  className={`px-5 py-2.5 rounded-lg flex items-center gap-2 transition-all duration-300 ${
+                    activeStep === 0
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-gray-700 hover:bg-white hover:shadow-md hover:border-gray-200 border border-transparent"
+                  }`}
+                  disabled={activeStep === 0}
+                >
+                  <ChevronLeft size={18} />
+                  <span className="hidden sm:inline">Previous Step</span>
+                </button>
+
+                <div className="flex items-center space-x-3">
+                  {steps.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setActiveStep(index)}
+                      className={`transition-all duration-300 ${
+                        activeStep === index
+                          ? `w-8 h-2 bg-gradient-to-r from-[#1e56a0] to-[#16c2d5] rounded-full`
+                          : "w-2 h-2 bg-gray-300 rounded-full hover:bg-gray-400"
+                      }`}
+                      aria-label={`Go to step ${index + 1}`}
+                    ></button>
+                  ))}
                 </div>
 
-                <div className="flex items-center justify-center">
-                  <div className="rounded-xl overflow-hidden shadow-lg border border-gray-200">
-                    <Image
-                      src={steps[activeStep].image || "/placeholder.svg"}
-                      alt={steps[activeStep].title}
-                      width={500}
-                      height={300}
-                      className="w-full h-auto"
-                    />
-                  </div>
-                </div>
+                <button
+                  onClick={nextStep}
+                  className={`px-5 py-2.5 rounded-lg flex items-center gap-2 transition-all duration-300 ${
+                    activeStep === steps.length - 1
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-gray-700 hover:bg-white hover:shadow-md hover:border-gray-200 border border-transparent"
+                  }`}
+                  disabled={activeStep === steps.length - 1}
+                >
+                  <span className="hidden sm:inline">Next Step</span>
+                  <ChevronRight size={18} />
+                </button>
               </div>
             </div>
 
-            <div className="bg-gray-50 p-4 border-t border-gray-100 flex justify-between items-center">
-              <button
-                onClick={prevStep}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  activeStep === 0 ? "text-gray-400 cursor-not-allowed" : "text-gray-700 hover:bg-white"
-                }`}
-                disabled={activeStep === 0}
+            {/* Call to action */}
+            <div className="mt-12 text-center">
+              <Link
+                href="/book-call"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#1e56a0] to-[#16c2d5] text-white rounded-full font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
-                <ChevronLeft size={18} />
-                <span className="hidden sm:inline">Previous</span>
-              </button>
-
-              <div className="flex items-center space-x-2">
-                {steps.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setActiveStep(index)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      activeStep === index ? `${getColorClass(steps[index].color, "bg")} w-4` : "bg-gray-300"
-                    }`}
-                    aria-label={`Go to step ${index + 1}`}
-                  ></button>
-                ))}
-              </div>
-
-              <button
-                onClick={nextStep}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  activeStep === steps.length - 1 ? "text-gray-400 cursor-not-allowed" : "text-gray-700 hover:bg-white"
-                }`}
-                disabled={activeStep === steps.length - 1}
-              >
-                <span className="hidden sm:inline">Next</span>
-                <ChevronRight size={18} />
-              </button>
+                See This Process in Action
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
             </div>
           </div>
         </div>
