@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import Header from "./components/header"
 import ImmersiveFooter from "@/components/immersive-footer"
+import ClientLayout from "./ClientLayout"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -56,7 +57,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} bg-white`}>
         <Header />
-        {children}
+        <ClientLayout>{children}</ClientLayout>
         <ImmersiveFooter />
       </body>
     </html>
