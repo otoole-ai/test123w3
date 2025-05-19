@@ -5,6 +5,7 @@ import "./globals.css"
 import Header from "./components/header"
 import ImmersiveFooter from "@/components/immersive-footer"
 import ClientLayout from "./ClientLayout"
+import Script from "next/script"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -54,6 +55,24 @@ export default function RootLayout({
       `,
           }}
         />
+
+        {/* Leadfeeder tracking script */}
+        <Script id="leadfeeder" strategy="beforeInteractive">
+          {`
+            (function(ss,ex){ window.ldfdr=window.ldfdr||function(){(ldfdr.q=ldfdr._q||[]).push([].slice.call(arguments));}; 
+            (function(d,s){ 
+              fs=d.getElementsByTagName(s)[0]; 
+              function ce(src){ 
+                var cs=d.createElement(s); 
+                cs.src=src; 
+                cs.async=1; 
+                fs.parentNode.insertBefore(cs,fs); 
+              }; 
+              ce('https://sc.lfeeder.com/lftracker_v1'+ss+(ex?'_'+ex:'')+'.js'); 
+            })(document,'script'); 
+            })('lAxoEaKzqQ04OYGd');
+          `}
+        </Script>
       </head>
       <body className={`${inter.className} bg-white`}>
         <Header />
